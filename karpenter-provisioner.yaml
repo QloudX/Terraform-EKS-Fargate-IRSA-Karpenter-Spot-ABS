@@ -1,0 +1,28 @@
+# https://karpenter.sh/docs/concepts/provisioners/
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  providerRef:
+    name: default
+  consolidation:
+    enabled: true
+  requirements:
+  - key: karpenter.sh/capacity-type
+    operator: In
+    values: ["spot"]
+  # Only pick nodes with 4-16 vCPUs
+  - key: karpenter.k8s.aws/instance-cpu
+    operator: Gt
+    values: ['3']
+  - key: karpenter.k8s.aws/instance-cpu
+    operator: Lt
+    values: ['17']
+  # Only pick nodes with 8-32G memory
+  - key: karpenter.k8s.aws/instance-memory
+    operator: Gt
+    values: ['7168'] # 7G
+  - key: karpenter.k8s.aws/instance-memory
+    operator: Lt
+    values: ['33792'] # 33G
